@@ -6,7 +6,10 @@ const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme
 // {
 //     axes: [
 //         [
+//             // Each axis needs a label, an angle (in degrees), and a metric function that takes a data item and returns a value from 0 to 5. 
+//             // The angle determines where the axis is positioned around the circle, with 0 degrees at the top and increasing clockwise.
 //             { label: "Visibility", angle: 0, metric: (i) => i.visibility },
+//             // If you use a blank label, you won't get a radial line. You can use this to control the transition from one axis to another, for example by averaging two metrics together.
 //             { label: "", angle: 20, metric: (i) => (i.visibility + i.misalignment) / 2 },
 //             { label: "Misalignment", angle: 40, metric: (i) => i.misalignment }
 //         ],
@@ -15,6 +18,7 @@ const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme
 //         ]
 //     ],
 //     data: [
+//         // Each data item needs an id, a name, and a color for the radar line. The rest of the properties can be whatever you want, as long as the metric functions in the axes can access them.
 //         { id: 1, name: "Debt Item 1", visibility: 3, misalignment: 4, resistance: 2, volatility: 5, regressions: 1, uncertainty: 2, size: 4, difficulty: 3, color: "#ff0000" },
 //         { id: 2, name: "Debt Item 2", visibility: 2, misalignment: 3, resistance: 4, volatility: 1, regressions: 5, uncertainty: 3, size: 2, difficulty: 4, color: "#00ff00" },
 //         { id: 3, name: "Debt Item 3", visibility: 4, misalignment: 2, resistance: 5, volatility: 3, regressions: 2, uncertainty: 4, size: 3, difficulty: 5, color: "#0000ff" }

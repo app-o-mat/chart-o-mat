@@ -27,7 +27,7 @@ const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme
 
 // options looks like this:
 // {
-//     includedIds: [1, 3] // array of debt item ids to include in the radar chart
+//     includedIds: [1, 3] // array of data item ids to include in the radar chart
 // }
 
 // Main function to draw the radar chart
@@ -58,7 +58,7 @@ export function renderRadarChart(selector, radarData, options = {}) {
     const axes = axisGroups.reduce((allAxes, group) => allAxes.concat(group || []), []);
     
     // Draw concentric circles
-    drawConcentricCircles(g, radius);
+    renderConcentricCircles(g, radius);
     
     // Draw vertical center line extending past the outermost circle
     const lineExtension = 50; // How much to extend past the outer circle
@@ -71,26 +71,26 @@ export function renderRadarChart(selector, radarData, options = {}) {
         .attr("stroke-width", 2);
     
     // Draw radial axes
-    drawRadialAxes(g, radius, axes);
+    renderRadialAxes(g, radius, axes);
     
-    // Draw radar lines for debt items
-    // Filter debt items based on checkboxes
-    const checkedItems = options.includedIds || [];
+    // Filter data items based on checkboxes
+    const includedIds = options.includedIds || [];
     
+    // Draw radar lines for data items
     if (radarData?.data) {
-        const filteredItems = radarData.data.filter(item => checkedItems.includes(item.id));
+        const filteredItems = radarData.data.filter(item => includedIds.includes(item.id));
         let axisStart = 0;
         axisGroups.forEach((group) => {
             const groupLength = (group || []).length;
             const groupAxes = axes.slice(axisStart, axisStart + groupLength);
-            drawRadarLines(g, radius, groupAxes, filteredItems);
+            renderRadarLines(g, radius, groupAxes, filteredItems);
             axisStart += groupLength;
         });
     }
 }
 
 // Function to draw 5 concentric circles
-function drawConcentricCircles(container, radius) {
+function renderConcentricCircles(container, radius) {
     const levels = 5;
     
     for (let i = 1; i <= levels; i++) {
@@ -106,7 +106,7 @@ function drawConcentricCircles(container, radius) {
 }
 
 // Function to draw radial axes with labels
-function drawRadialAxes(container, radius, axes) {
+function renderRadialAxes(container, radius, axes) {
     axes.filter(axis => axis.label).forEach(axis => {
         // Convert degrees to radians
         const angleRad = -(axis.angle) * Math.PI / 180;
@@ -142,9 +142,9 @@ function drawRadialAxes(container, radius, axes) {
     });
 }
 
-// Function to draw radar lines for debt items
-function drawRadarLines(container, radius, axes, debtItems) {
-    debtItems.forEach(item => {
+// Function to draw radar lines for data items
+function renderRadarLines(container, radius, axes, dataItems) {
+    dataItems.forEach(item => {
         // Calculate points for this item
         const points = axes.map(axis => {
             // Get the metric value (0-5 scale)

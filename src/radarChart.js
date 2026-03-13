@@ -1,4 +1,5 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import { getColorBasedOnName } from "./colorUtils.js";
 
 // radarData looks like this:
 // {
@@ -17,6 +18,7 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 //     ],
 //     data: [
 //         // Each data item needs an id, a name, and a color for the radar line. The rest of the properties can be whatever you want, as long as the metric functions in the axes can access them.
+//         // If no color is provided, a default will be chosen based on the name.
 //         { id: 1, name: "Debt Item 1", visibility: 3, misalignment: 4, resistance: 2, volatility: 5, regressions: 1, uncertainty: 2, size: 4, difficulty: 3, color: "#ff0000" },
 //         { id: 2, name: "Debt Item 2", visibility: 2, misalignment: 3, resistance: 4, volatility: 1, regressions: 5, uncertainty: 3, size: 2, difficulty: 4, color: "#00ff00" },
 //         { id: 3, name: "Debt Item 3", visibility: 4, misalignment: 2, resistance: 5, volatility: 3, regressions: 2, uncertainty: 4, size: 3, difficulty: 5, color: "#0000ff" }
@@ -147,17 +149,17 @@ function renderRadarLines(container, radius, axes, dataItems) {
         const points = axes.map(axis => {
             // Get the metric value (0-5 scale)
             const value = axis.metric(item);
-            
+
             // Calculate distance from center (normalized to radius)
             const distance = (value / 5) * radius;
-            
+
             // Convert degrees to radians
             const angleRad = -(axis.angle) * Math.PI / 180;
-            
+
             // Calculate x, y coordinates
             const x = distance * Math.cos(angleRad);
             const y = distance * Math.sin(angleRad);
-            
+
             return [x, y];
         });
 
@@ -170,13 +172,16 @@ function renderRadarLines(container, radius, axes, dataItems) {
             .x(d => d[0])
             .y(d => d[1])
             .curve(d3.curveCardinalClosed.tension(0.5));
-        
+
+        // Use imported getColorBasedOnName
+        const color = item.color || getColorBasedOnName(item.name);
+
         // Draw the radar line
         container.append("path")
             .attr("d", lineGenerator(points))
-            .attr("fill", item.color)
+            .attr("fill", color)
             .attr("fill-opacity", 0.7)
-            .attr("stroke", item.color)
+            .attr("stroke", color)
             .attr("stroke-width", 2)
             .attr("stroke-opacity", 1.0)
             .append("title")

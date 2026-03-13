@@ -3,6 +3,7 @@
     License: Public domain (or MIT if needed). Attribution appreciated.
     A fast and simple 53-bit string hash function with decent collision resistance.
     Largely inspired by MurmurHash2/3, but with a focus on speed/simplicity.
+    https://github.com/bryc/code/blob/master/jshash/experimental/cyrb53.js
 */
 const cyrb53 = function(str, seed = 0) {
   let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;

@@ -13,6 +13,9 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script type="module">
     import '../src/chart-o-mat.js';
+    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // make the background color of the page match the radar chart's colors for better contrast
+    document.body.style.backgroundColor = isDarkMode ? '#222' : '#fff';
 
     const angleSpace = 25;
     const radarData = {
@@ -45,13 +48,15 @@
 
     const radarFilters = document.querySelector('#radar-filters');
     radarData.data.forEach((item) => {
-      const label = document.createElement('label');
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.value = String(item.id);
-      checkbox.checked = true;
-      label.append(checkbox, ` ${item.name}`);
-      radarFilters.append(label, document.createElement('br'));
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = String(item.id);
+        checkbox.checked = true;
+        label.style.color = isDarkMode ? '#ccc' : '#333';
+        
+        label.append(checkbox, ` ${item.name}`);
+        radarFilters.append(label, document.createElement('br'));
     });
 
     function renderRadarFromSelection() {
@@ -60,7 +65,10 @@
       ).map((checkbox) => Number(checkbox.value));
 
       window.ChartOMat.renderRadarChart('#radar', radarData, {
-        includedIds
+        includedIds,
+        labelColor: isDarkMode ? '#ccc' : '#333',
+        circleColor: isDarkMode ? '#ccc' : '#333',
+        radialLineColor: "#666"
       });
     }
 

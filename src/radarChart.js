@@ -1,7 +1,5 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
 // radarData looks like this:
 // {
 //     axes: [
@@ -58,7 +56,7 @@ export function renderRadarChart(selector, radarData, options = {}) {
     const axes = axisGroups.reduce((allAxes, group) => allAxes.concat(group || []), []);
     
     // Draw concentric circles
-    renderConcentricCircles(g, radius);
+    renderConcentricCircles(g, radius, options);
     
     // Draw vertical center line extending past the outermost circle
     const lineExtension = 50; // How much to extend past the outer circle
@@ -71,7 +69,7 @@ export function renderRadarChart(selector, radarData, options = {}) {
         .attr("stroke-width", 2);
     
     // Draw radial axes
-    renderRadialAxes(g, radius, axes);
+    renderRadialAxes(g, radius, axes, options);
     
     // Filter data items based on checkboxes
     const includedIds = options.includedIds || [];
@@ -90,7 +88,7 @@ export function renderRadarChart(selector, radarData, options = {}) {
 }
 
 // Function to draw 5 concentric circles
-function renderConcentricCircles(container, radius) {
+function renderConcentricCircles(container, radius, options = {}) {
     const levels = 5;
     
     for (let i = 1; i <= levels; i++) {
@@ -100,13 +98,13 @@ function renderConcentricCircles(container, radius) {
             .attr("cy", 0)
             .attr("r", r)
             .attr("fill", "none")
-            .attr("stroke", isDarkMode ? "#ccc" : "#333")
+            .attr("stroke", options.circleColor || "#ccc")
             .attr("stroke-width", 1);
     }
 }
 
 // Function to draw radial axes with labels
-function renderRadialAxes(container, radius, axes) {
+function renderRadialAxes(container, radius, axes, options) {
     axes.filter(axis => axis.label).forEach(axis => {
         // Convert degrees to radians
         const angleRad = -(axis.angle) * Math.PI / 180;
@@ -121,7 +119,7 @@ function renderRadialAxes(container, radius, axes) {
             .attr("y1", 0)
             .attr("x2", x)
             .attr("y2", y)
-            .attr("stroke", "#666")
+            .attr("stroke", options.radialLineColor || "#666")
             .attr("stroke-width", 2);
         
         // Calculate label position (slightly beyond the radius)
@@ -137,7 +135,7 @@ function renderRadialAxes(container, radius, axes) {
             .attr("dominant-baseline", "middle")
             .attr("font-size", "14px")
             .attr("font-weight", "bold")
-            .attr("fill", isDarkMode ? "#ccc" : "#333")
+            .attr("fill", options.labelColor || "#000")
             .text(axis.label);
     });
 }

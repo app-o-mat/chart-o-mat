@@ -5,9 +5,14 @@ const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme
 // radarData looks like this:
 // {
 //     axes: [
-//         { label: "Visibility", angle: 0, metric: (i) => i.visibility },
-//         { label: "", angle: 20, metric: (i) => (i.visibility + i.misalignment) / 2 },
-//         { label: "Misalignment", angle: 40, metric: (i) => i.misalignment },
+//         [
+//             { label: "Visibility", angle: 0, metric: (i) => i.visibility },
+//             { label: "", angle: 20, metric: (i) => (i.visibility + i.misalignment) / 2 },
+//             { label: "Misalignment", angle: 40, metric: (i) => i.misalignment }
+//         ],
+//         [
+//             { label: "Regressions", angle: 180, metric: (i) => i.regressions }
+//         ]
 //     ],
 //     data: [
 //         { id: 1, name: "Debt Item 1", visibility: 3, misalignment: 4, resistance: 2, volatility: 5, regressions: 1, uncertainty: 2, size: 4, difficulty: 3, color: "#ff0000" },
@@ -45,7 +50,8 @@ export function renderRadarChart(selector, radarData, options = {}) {
     const g = svg.append("g")
         .attr("transform", `translate(${margin.left + innerWidth / 2},${margin.top + innerHeight / 2})`);
     
-    const axes = radarData?.axes || [];
+    const axisGroups = Array.isArray(radarData?.axes) ? radarData.axes : [];
+    const axes = axisGroups.reduce((allAxes, group) => allAxes.concat(group || []), []);
     
     // Draw concentric circles
     drawConcentricCircles(g, radius);
@@ -69,9 +75,13 @@ export function renderRadarChart(selector, radarData, options = {}) {
     
     if (radarData?.data) {
         const filteredItems = radarData.data.filter(item => checkedItems.includes(item.id));
-        // pass in the first 7 axes
-        drawRadarLines(g, radius, axes.slice(0, 7), filteredItems);
-        drawRadarLines(g, radius, axes.slice(7, 14), filteredItems);
+        let axisStart = 0;
+        axisGroups.forEach((group) => {
+            const groupLength = (group || []).length;
+            const groupAxes = axes.slice(axisStart, axisStart + groupLength);
+            drawRadarLines(g, radius, groupAxes, filteredItems);
+            axisStart += groupLength;
+        });
     }
 }
 

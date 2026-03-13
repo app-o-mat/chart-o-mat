@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>chart-o-mat minimal demo</title>
+</head>
+<body>
+  <div id="chart"></div>
+  <div id="radar"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script type="module">
+    import '../src/chart-o-mat.js';
+
+    const angleSpace = 25;
+    const radarData = {
+      axes: [
+        { label: 'Visibility', angle: 3 * angleSpace, metric: (i) => i.visibility },
+        { label: '', angle: 2 * angleSpace, metric: (i) => (i.visibility + i.misalignment) / 2 },
+        { label: 'Misalignment', angle: angleSpace, metric: (i) => i.misalignment },
+        { label: '', angle: 0, metric: (i) => (i.misalignment + i.resistance) / 2 },
+        { label: 'Resistance', angle: 360 - angleSpace, metric: (i) => i.resistance },
+        { label: '', angle: 360 - 2 * angleSpace, metric: (i) => (i.resistance + i.volatility) / 2 },
+        { label: 'Volatility', angle: 360 - 3 * angleSpace, metric: (i) => i.volatility },
+
+        { label: 'Regressions', angle: 180 + 3 * angleSpace, metric: (i) => i.regressions },
+        { label: '', angle: 180 + 2 * angleSpace, metric: (i) => (i.regressions + i.uncertainty) / 2 },
+        { label: 'Uncertainty', angle: 180 + angleSpace, metric: (i) => i.uncertainty },
+        { label: '', angle: 180, metric: (i) => (i.uncertainty + i.size) / 2 },
+        { label: 'Size', angle: 180 - angleSpace, metric: (i) => i.size },
+        { label: '', angle: 180 - 2 * angleSpace, metric: (i) => (i.size + i.difficulty) / 2 },
+        { label: 'Difficulty', angle: 180 - 3 * angleSpace, metric: (i) => i.difficulty }
+      ],
+      data: [
+        { id: 1, name: 'Debt Item 1', visibility: 3, misalignment: 4, resistance: 2, volatility: 5, regressions: 1, uncertainty: 2, size: 4, difficulty: 3, color: '#ff0000' },
+        { id: 2, name: 'Debt Item 2', visibility: 2, misalignment: 3, resistance: 4, volatility: 1, regressions: 5, uncertainty: 3, size: 2, difficulty: 4, color: '#00ff00' },
+        { id: 3, name: 'Debt Item 3', visibility: 4, misalignment: 2, resistance: 5, volatility: 3, regressions: 2, uncertainty: 4, size: 3, difficulty: 5, color: '#0000ff' }
+      ]
+    };
+
+    window.ChartOMat.renderRadarChart('#radar', radarData, {
+      includedIds: radarData.data.map((item) => item.id)
+    });
+  </script>
+</body>
+</html>

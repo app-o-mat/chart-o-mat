@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <body>
+    <pre id="output"></pre>
+
+    <script type="module">
+        import { createTestHarness } from "./test-harness.js";
+        import { getColorBasedOnName } from "../src/colorUtils.js";
+        const { test, equal, notEqual, log } = createTestHarness(
+            document.getElementById("output")
+        );
+
+        test("default colors", () => {
+            equal(getColorBasedOnName("test"), `hsl(9, 75%, 60%)`, "Default color");
+            notEqual(getColorBasedOnName("test2"), getColorBasedOnName("test"), "colors are different");
+        });
+    </script>
+  </body>
+</html>
